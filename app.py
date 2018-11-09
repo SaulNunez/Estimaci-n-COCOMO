@@ -11,7 +11,7 @@ class App(QWidget):
 
     def __init__(self):
         super(App, self).__init__()
-        self.setWindowTitle('Método COCOMO')
+        self.setWindowTitle('Modelo COCOMO')
         self.show()
 
         self.forma_grado_tot_influencia()
@@ -49,9 +49,9 @@ class App(QWidget):
 
         self.fae_combobox =[]
 
-        for label in Cocomo.variables_fae:
+        for label in Cocomo.conductores_coste:
             cb = QComboBox()
-            for value in Cocomo.variables_fae[label]:
+            for value in Cocomo.conductores_coste[label]:
                 cb.addItem(value)
             # Aesthetics, hacer que la primera opción estándar para todos y más importante, sana
             index = cb.findText('Nominal', Qt.MatchFixedString)
@@ -86,14 +86,14 @@ class App(QWidget):
 
         self.formGroupBox3.setLayout(layout)
 
-        def reset(self):
-            pass
-        def calculo_fae(self):
-            pass
-        def calculo_gti(self):
-            pass
-        def calcular_cocomo(self):
-            pass
+    def reset(self):
+        pass
+    def calculo_fae(self):
+        pass
+    def calculo_gti(self):
+        pass
+    def calcular_cocomo(self):
+        pass
 
 
 if __name__ == '__main__':

@@ -9,18 +9,28 @@ class CocomoModel():
         self.personal = 0
         self.pr = 0
         self.kloc = 0
+        self.fae = 1
+        self.gti = 0
+        self.pf = 0
 
-    def calcularEsfuerzo(self):
+    def calcularCocomo(self):
         pass
 
-    def calcularTiempoDesarrollo(self):
-        pass
+    def calcularFae(self, valores):
+        self.fae = 1
+        for val in valores:
+            self.fae = self.fae * val
 
-    def calcularPersonal(self):
-        pass
+        return self.fae
 
-    def calcularPR(self):
-        pass
+    def calcularGti(self, valores):
+        self.gti = 0
+        for val in valores:
+            self.gti = self.gti + val
 
-    def calcularkloc(self):
-        pass
+        return self.gti
+        
+
+    def calcularPf(self, entradas, salidas, peticiones, archivos, interfaces):
+        self.pf = 0
+

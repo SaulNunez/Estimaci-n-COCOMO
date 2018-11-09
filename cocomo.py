@@ -75,7 +75,7 @@ class Cocomo():
         '14) ¿Se ha diseñado la aplicación para facilitar los cambios y para ser fácilmente utilizada por el usuario?'
     ]
 
-    variables_fae = {
+    conductores_coste = {
         'Flexibilidad requerida del software': {
             'Muy Bajo':0.75,
             'Bajo':0.88,
