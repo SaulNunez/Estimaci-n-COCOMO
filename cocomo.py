@@ -1,7 +1,7 @@
 from enum import Enum
 
 class Cocomo():
-    class Tipos(Enum):
+    class Tipo(Enum):
         ORGANICO = 1
         SEMI_ACOPLADO = 2
         EMPOTRADO = 3
@@ -11,26 +11,69 @@ class Cocomo():
         INTERMEDIO = 2
         AVANZADO = 3
 
-
-    const_organico = {
-        'a':2.40,
-        'b':1.05,
-        'c':2.50,
-        'd':0.38
-    }
-
-    const_semi_organico = {
-        'a':3.00,
-        'b':1.12,
-        'c':2.50,
-        'd':0.35
-    }
-
-    const_empotrado = {
-        'a':3.60,
-        'b':1.20,
-        'c':2.50,
-        'd':0.33
+    constantes = {
+        Modelo.BASICO : {
+            Tipo.ORGANICO : {
+                'a':2.40,
+                'b':1.05,
+                'c':2.50,
+                'd':0.38
+            },
+            Tipo.SEMI_ACOPLADO : {
+                'a':3.00,
+                'b':1.12,
+                'c':2.50,
+                'd':0.35
+            },
+            Tipo.EMPOTRADO : {
+                'a':3.60,
+                'b':1.20,
+                'c':2.50,
+                'd':0.33
+            }
+        },
+        Modelo.INTERMEDIO : {
+            Tipo.ORGANICO : {
+                'a':3.20,
+                'b':1.05,
+                'c':2.50,
+                'd':0.38
+            },
+            Tipo.SEMI_ACOPLADO : {
+                'a':3.00,
+                'b':1.12,
+                'c':2.50,
+                'd':0.35
+            },
+            Tipo.EMPOTRADO : {
+                'a':2.80,
+                'b':1.20,
+                'c':2.50,
+                'd':0.32
+            }
+        },
+        Modelo.AVANZADO : {
+            #Nota, estos valores no esta verificados
+            #Solo estan puestos para evitar fallas en ejecución
+            Tipo.ORGANICO : {
+                'a':3.20,
+                'b':1.05,
+                'c':2.50,
+                'd':0.38
+            },
+            Tipo.SEMI_ACOPLADO : {
+                'a':3.00,
+                'b':1.12,
+                'c':2.50,
+                'd':0.35
+            },
+            Tipo.EMPOTRADO : {
+                'a':2.80,
+                'b':1.20,
+                'c':2.50,
+                'd':0.32
+            }
+        }
     }
 
     indice_loc = {
