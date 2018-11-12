@@ -1,6 +1,6 @@
 import sys
 from PyQt5.QtWidgets import QApplication, QDialog, QWidget, QPushButton, QDialogButtonBox, QLabel, QGroupBox, QFormLayout, QSpinBox, QHBoxLayout, QComboBox, QListWidget, QVBoxLayout, QFileDialog
-from PyQt5.QtGui import QIcon
+from PyQt5.QtGui import QIcon, QFont
 from PyQt5.QtCore import pyqtSlot, Qt
 #from enum import Enum
 from cocomo import Cocomo
@@ -26,8 +26,20 @@ class CocomoView(QWidget):
         self.secondary_bottom.addWidget(self.formGroupBox)
         self.secondary_bottom.addWidget(self.formGroupBox2)
 
+        self.results_group = QVBoxLayout()
+        self.results_group.addWidget(QLabel("Resultados"))
+        self.results_group.addWidget(QLabel("Esfuerzo (persona x mes)"))
+        self.results_group.addWidget(QLabel("0"))
+        self.results_group.addWidget(QLabel("Tiempo de desarrollo (meses)"))
+        self.results_group.addWidget(QLabel("0"))
+        self.results_group.addWidget(QLabel("PR(LDC/persona x mes)"))
+        self.results_group.addWidget(QLabel("0"))
+        self.results_group.addWidget(QLabel("KLDC"))
+        self.results_group.addWidget(QLabel("0"))
+
         self.secondary_top = QHBoxLayout()
         self.secondary_top.addWidget(self.formGroupBox3)
+        self.secondary_top.addLayout(self.results_group)
 
         self.mainLayout.addLayout(self.secondary_top)
         self.mainLayout.addLayout(self.secondary_bottom)
