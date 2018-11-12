@@ -1,5 +1,6 @@
 from enum import Enum
 
+#Constantes del método Cocomo
 class Cocomo():
     class Tipo(Enum):
         ORGANICO = 1
@@ -118,7 +119,7 @@ class Cocomo():
         '14) ¿Se ha diseñado la aplicación para facilitar los cambios y para ser fácilmente utilizada por el usuario?'
     ]
 
-    conductores_coste = {
+    conductores_coste_fae = {
         'Flexibilidad requerida del software': {
             'Muy Bajo':0.75,
             'Bajo':0.88,
@@ -211,7 +212,7 @@ class Cocomo():
             'Alto':0.91,
             'Muy Alto':0.83
         },
-        'Limitaciones de planificacin del proyecto':{
+        'Limitaciones de planificación del proyecto':{
             'Muy Bajo':1.23,
             'Bajo':1.08,
             'Nominal':1.00,
