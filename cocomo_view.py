@@ -155,6 +155,7 @@ class CocomoView(QWidget):
         for key in self.fae_combobox:
             combobox = self.fae_combobox[key]
             value = Cocomo.conductores_coste_fae[key][str(combobox.currentText())]
+            print(value)
             valores.append(value)
         self.controller.fae_cambiado(valores)
 

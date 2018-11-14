@@ -13,18 +13,25 @@ class CocomoController():
         self.view = CocomoView(self)
         self.modelo = CocomoModel(self, lambda esfuerzo, tiempo_desarrollo, personal, pr,
                                   loc: self.view.mostrar_calculos_cocomo(esfuerzo, tiempo_desarrollo, personal, pr, loc))
-        # app.setStyle(QStyleFactory.create("Fusion"))
+        app.setStyle(QStyleFactory.create("Fusion"))
+        print(type(self.modelo))
         sys.exit(app.exec_())
 
     def reestablecer_modelo(self):
         self.view.reset()
 
     def gti_cambiado(self, valores):
-        self.modelo.calcularGti(valores)
+        try:
+            self.modelo.calcularGti(valores)
+        except AttributeError:
+            pass
 
     def fae_cambiado(self, valores):
-        #self.modelo.calcularFae(valores)
-        pass
+        try:
+            self.modelo.calcularFae(valores)
+        except AttributeError:
+            pass
+        # pass
 
     def cocomo_calculado(self, esfuerzo, tiempo_desarrollo, personal, pr, loc):
         self.view.mostrar_calculos_cocomo(

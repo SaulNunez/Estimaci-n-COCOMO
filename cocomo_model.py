@@ -109,5 +109,3 @@ class CocomoModel():
         for val in valores:
             self.__fae = self.__fae * val
 
-        return self.__fae
-
