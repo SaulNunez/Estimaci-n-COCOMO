@@ -8,11 +8,12 @@ from cocomo_model import CocomoModel
 
 class CocomoView(QWidget):
 
-    def __init__(self):
+    def __init__(self, controller):
         super(CocomoView, self).__init__()
         self.setWindowTitle('Modelo COCOMO')
         self.show()
 
+        self.controller = controller
         self.forma_grado_tot_influencia()
         self.forma_fae()
         self.forma_detalles_sistema()
@@ -29,13 +30,17 @@ class CocomoView(QWidget):
         self.results_group = QVBoxLayout()
         self.results_group.addWidget(QLabel("Resultados"))
         self.results_group.addWidget(QLabel("Esfuerzo (persona x mes)"))
-        self.results_group.addWidget(QLabel("0"))
+        self.esfuerzo_label = QLabel("0")
+        self.results_group.addWidget(self.esfuerzo_label)
         self.results_group.addWidget(QLabel("Tiempo de desarrollo (meses)"))
-        self.results_group.addWidget(QLabel("0"))
+        self.tiempo_desarrollo_label = QLabel("0")
+        self.results_group.addWidget(self.tiempo_desarrollo_label)
         self.results_group.addWidget(QLabel("PR(LDC/persona x mes)"))
-        self.results_group.addWidget(QLabel("0"))
+        self.pr_label = QLabel("0")
+        self.results_group.addWidget(self.pr_label)
         self.results_group.addWidget(QLabel("KLDC"))
-        self.results_group.addWidget(QLabel("0"))
+        self.kloc_label = QLabel("0")
+        self.results_group.addWidget(self.kloc_label)
 
         self.secondary_top = QHBoxLayout()
         self.secondary_top.addWidget(self.formGroupBox3)
@@ -67,6 +72,7 @@ class CocomoView(QWidget):
             sb = QSpinBox()
             sb.setMinimum(0)
             sb.setMaximum(5)
+            sb.valueChanged.connect(self.establecer_gti)
             layout.addRow(QLabel(label), sb)
             self.respuesta_spinbox.append(sb) 
 
@@ -76,18 +82,19 @@ class CocomoView(QWidget):
         self.formGroupBox2 = QGroupBox("Variable FAE")
         layout = QFormLayout()
 
-        self.fae_combobox =[]
+        self.fae_combobox ={}
 
         for label in Cocomo.conductores_coste_fae:
             cb = QComboBox()
             for value in Cocomo.conductores_coste_fae[label]:
                 cb.addItem(value)
+            cb.currentIndexChanged.connect(self.establecer_valor_fae)
             # Aesthetics, hacer que la primera opción estándar para todos y más importante, sana
             index = cb.findText('Nominal', Qt.MatchFixedString)
             if index >= 0:
                 cb.setCurrentIndex(index)
             layout.addRow(QLabel(label), cb)
-            self.fae_combobox.append(cb) 
+            self.fae_combobox[label] =  cb
 
         self.formGroupBox2.setLayout(layout)
 
@@ -98,14 +105,19 @@ class CocomoView(QWidget):
 
         self.entradas = QSpinBox()
         self.entradas.setMinimum(0)
+        self.entradas.valueChanged.connect(self.cambio_datos_sistema)
         self.salidas = QSpinBox()
         self.salidas.setMinimum(0)
+        self.salidas.valueChanged.connect(self.cambio_datos_sistema)
         self.peticiones = QSpinBox()
         self.peticiones.setMinimum(0)
+        self.peticiones.valueChanged.connect(self.cambio_datos_sistema)
         self.archivos = QSpinBox()
         self.archivos.setMinimum(0)
+        self.archivos.valueChanged.connect(self.cambio_datos_sistema)
         self.interfaces = QSpinBox()
         self.interfaces.setMinimum(0)
+        self.interfaces.valueChanged.connect(self.cambio_datos_sistema)
 
         layout.addRow(QLabel('Entradas'), self.entradas)
         layout.addRow(QLabel('Salidas'), self.salidas)
@@ -118,27 +130,61 @@ class CocomoView(QWidget):
     def reset(self):
         for sp in self.respuesta_spinbox:
             sp.setValue(0)
-        for cb in self.fae_combobox:
-            index = cb.findText('Nominal', Qt.MatchFixedString)
+        for comboboxes_dict in self.fae_combobox:
+            index = self.fae_combobox[comboboxes_dict].findText('Nominal', Qt.MatchFixedString)
             if index >= 0:
-                cb.setCurrentIndex(index)
+                self.fae_combobox[comboboxes_dict].setCurrentIndex(index)
         self.entradas.setValue(0)
         self.salidas.setValue(0)
         self.peticiones.setValue(0)
         self.archivos.setValue(0)
         self.interfaces.setValue(0)
-        
+
+    @pyqtSlot(int)
+    def establecer_valor_fae(self, i):
+        self.calculo_fae()
+        print('hola')
+
+    @pyqtSlot(int)   
+    def establecer_gti(self, i):
+        self.calculo_gti()
+        print('hol')
+
     def calculo_fae(self):
-        pass
+        valores = []
+        for key in self.fae_combobox:
+            combobox = self.fae_combobox[key]
+            value = Cocomo.conductores_coste_fae[key][str(combobox.currentText())]
+            valores.append(value)
+        self.controller.fae_cambiado(valores)
+
     def calculo_gti(self):
-        pass
-    def calcular_cocomo(self):
-        pass
+        valores = []
+        for sp in self.respuesta_spinbox:
+            valores.append(sp.value())
+        self.controller.gti_cambiado(valores)
+
+    @pyqtSlot(int)
+    def cambio_datos_sistema(self, i):
+        self.calcular_pf()
+        print('ho')
+
+    def calcular_pf(self):
+        self.controller.calcularPf(self.entradas.value(), self.salidas.value(), self.peticiones.value(), self.archivos.value(), self.interfaces.value())
 
     def salvar(self):
         options = QFileDialog.Options()
         fileName, _ = QFileDialog.getSaveFileName(self,"Salvar modelo actual","","JSON Files (*.json);;All Files (*)", options=options)
+        self.controller.abrir(fileName)
+
+    def mostrar_calculos_cocomo(self, esfuerzo, tiempo_desarrollo, personal, pr, loc):
+        self.esfuerzo_label.setText(str(esfuerzo))
+        self.tiempo_desarrollo_label.setText(str(tiempo_desarrollo))
+        self.pr_label.setText(str(personal))
+        self.kloc_label.setText(str(loc / 1000))
 
     def abrir(self):
         options = QFileDialog.Options()
-        fileName, _ = QFileDialog.getOpenFileName(self,"Abrir modelo existente","","JSON Files (*.json);;All Files (*)", options=options)
+        fileName, _ = QFileDialog.getSaveFileName(self,"Salvar modelo actual","","JSON Files (*.json);;All Files (*)", options=options)
+        self.controller.abrir(fileName)
+        

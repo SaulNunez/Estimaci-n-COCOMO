@@ -4,25 +4,44 @@ from enum import Enum
 from cocomo import Cocomo
 from cocomo_model import CocomoModel
 from cocomo_view import CocomoView
+import json
 
-def iniciar():
-    app = QApplication(sys.argv)
-    app.setStyle(QStyleFactory.create("Fusion"))
-    model = CocomoModel()
-    view = CocomoView()
-    sys.exit(app.exec_())
 
-def reestablecer_modelo():
-    pass
+class CocomoController():
+    def __init__(self):
+        app = QApplication(sys.argv)
+        self.view = CocomoView(self)
+        self.modelo = CocomoModel(self, lambda esfuerzo, tiempo_desarrollo, personal, pr,
+                                  loc: self.view.mostrar_calculos_cocomo(esfuerzo, tiempo_desarrollo, personal, pr, loc))
+        # app.setStyle(QStyleFactory.create("Fusion"))
+        sys.exit(app.exec_())
 
-def fae_cambiado(valores):
-    pass
+    def reestablecer_modelo(self):
+        self.view.reset()
 
-def gti_cambiado(valores):
-    pass
+    def gti_cambiado(self, valores):
+        self.modelo.calcularGti(valores)
 
-def calcularPf(entradas, salidas, peticiones, archivos, interfaces):
-    pass
+    def fae_cambiado(self, valores):
+        #self.modelo.calcularFae(valores)
+        pass
+
+    def cocomo_calculado(self, esfuerzo, tiempo_desarrollo, personal, pr, loc):
+        self.view.mostrar_calculos_cocomo(
+            esfuerzo, tiempo_desarrollo, personal, pr, loc)
+
+    def calcularPf(self, entradas, salidas, peticiones, archivos, interfaces):
+        self.modelo.calcularPf(
+            entradas, salidas, peticiones, archivos, interfaces)
+
+    def salvar(self, fileName):
+        # with open(fileName, "w") as write_file:
+        #    json.dump(model, write_file)
+        pass
+
+    def abrir(self, fileName):
+        pass
+
 
 if __name__ == '__main__':
-    iniciar()
+    ccm = CocomoController()

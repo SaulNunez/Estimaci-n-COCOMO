@@ -2,8 +2,9 @@ from cocomo import Cocomo
 
 
 class CocomoModel():
-    def __init__(self):
+    def __init__(self, controller, correr_al_calcular):
         self.reset()
+        self.correr_al_calcular = correr_al_calcular
 
     def reset(self):
         self.__tipo = Cocomo.Tipo.ORGANICO
@@ -34,31 +35,32 @@ class CocomoModel():
     def establecer_modelo(self, modelo):
         self.__modelo = modelo
         self.calcularCocomo()
-
-    def calcularFae(self, valores):
-        self.__fae = 1
-        for val in valores:
-            self.__fae = self.__fae * val
-
-        return self.__fae
-
+    
     def calcularCocomo(self):
         a = Cocomo.constantes[self.__modelo][self.__tipo]['a']
-        e = Cocomo.constantes[self.__modelo][self.__tipo]['e']
+        b = Cocomo.constantes[self.__modelo][self.__tipo]['b']
         c = Cocomo.constantes[self.__modelo][self.__tipo]['c']
         d = Cocomo.constantes[self.__modelo][self.__tipo]['d']
-        self.__esfuerzo = a * (self.loc / 1000) ** e
+        self.__esfuerzo = a * (self.loc / 1000) ** b
         if(self.__modelo == Cocomo.Modelo.INTERMEDIO):
             self.__esfuerzo = self.__esfuerzo * self.__fae
         self.__tiempo_de_desarrollo = c * self.__esfuerzo ** d
-        self.__personal = self.__esfuerzo/self.__tiempo_de_desarrollo
-        self.__pr = self.loc / self.__esfuerzo
+        if self.__tiempo_de_desarrollo != 0:
+            self.__personal = self.__esfuerzo/self.__tiempo_de_desarrollo
+        else:
+            self.__personal = 0
+        if self.__esfuerzo != 0:
+            self.__pr = self.loc / self.__esfuerzo
+        else:
+            self.__pr = 0
+
+        self.correr_al_calcular(self.__esfuerzo, self.__tiempo_de_desarrollo, self.__personal, self.__pr, self.loc)
 
     def calcularGti(self, valores):
         self.gti = 0
         for val in valores:
             self.gti = self.gti + val
-        return self.gti 
+        self.calcularCocomo() 
 
     def calcularPf(self, entradas, salidas, peticiones, archivos, interfaces):
         self.pf = 0
@@ -100,4 +102,12 @@ class CocomoModel():
         self.pf = entradas_total + salidas_total + \
             peticiones_total + archivos_total + interfaces_total
 
-        return self.pf
+        self.calcularCocomo()
+
+    def calcularFae(self, valores):
+        self.__fae = 1
+        for val in valores:
+            self.__fae = self.__fae * val
+
+        return self.__fae
+
