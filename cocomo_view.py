@@ -1,10 +1,12 @@
 import sys
-from PyQt5.QtWidgets import QApplication, QDialog, QWidget, QPushButton, QDialogButtonBox, QLabel, QGroupBox, QFormLayout, QSpinBox, QHBoxLayout, QComboBox, QListWidget, QVBoxLayout, QFileDialog
+from PyQt5.QtWidgets import (QApplication, QDialog, QWidget, QPushButton, QDialogButtonBox, QLabel, QGroupBox,
+                             QFormLayout, QSpinBox, QHBoxLayout, QComboBox, QListWidget, QVBoxLayout, QFileDialog, QListWidgetItem, QRadioButton, QButtonGroup, QGroupBox)
 from PyQt5.QtGui import QIcon, QFont
 from PyQt5.QtCore import pyqtSlot, Qt
 #from enum import Enum
 from cocomo import Cocomo
 from cocomo_model import CocomoModel
+
 
 class CocomoView(QWidget):
 
@@ -14,16 +16,27 @@ class CocomoView(QWidget):
         self.show()
 
         self.controller = controller
-        self.forma_grado_tot_influencia()
+        self.formGroupBox = self.forma_grado_tot_influencia()
         self.forma_fae()
         self.forma_detalles_sistema()
+        self.modelo_groupbox = self.crear_seleccion_modelo()
+        self.tipo_groupbox = self.crear_seleccion_tipo()
         self.mainLayout = QVBoxLayout()
         self.secondary_bottom = QHBoxLayout()
         self.lenguajes_programacion_proyecto_listwidget = QListWidget()
-        #self.lenguajes_programacion_proyecto_listwidget.state
+        # self.lenguajes_programacion_proyecto_listwidget.state
         for key in Cocomo.indice_loc:
-            self.lenguajes_programacion_proyecto_listwidget.addItem(key)
-        self.secondary_bottom.addWidget(self.lenguajes_programacion_proyecto_listwidget)
+            item = QListWidgetItem(
+                key, self.lenguajes_programacion_proyecto_listwidget)
+            # item = QListWidgetItem()
+            # item.setText(key)
+            item.setFlags(item.flags() | Qt.ItemIsUserCheckable)
+            item.setCheckState(Qt.Unchecked)
+            # self.lenguajes_programacion_proyecto_listwidget.addItem(item)
+        self.lenguajes_programacion_proyecto_listwidget.itemChanged.connect(
+            self.definir_lenguaje_programacion)
+        self.secondary_bottom.addWidget(
+            self.lenguajes_programacion_proyecto_listwidget)
         self.secondary_bottom.addWidget(self.formGroupBox)
         self.secondary_bottom.addWidget(self.formGroupBox2)
 
@@ -44,6 +57,8 @@ class CocomoView(QWidget):
 
         self.secondary_top = QHBoxLayout()
         self.secondary_top.addWidget(self.formGroupBox3)
+        self.secondary_top.addWidget(self.modelo_groupbox)
+        self.secondary_top.addWidget(self.tipo_groupbox)
         self.secondary_top.addLayout(self.results_group)
 
         self.mainLayout.addLayout(self.secondary_top)
@@ -63,7 +78,7 @@ class CocomoView(QWidget):
         self.setLayout(self.mainLayout)
 
     def forma_grado_tot_influencia(self):
-        self.formGroupBox = QGroupBox("Grado Total de Influencia")
+        formGroupBox = QGroupBox("Grado Total de Influencia")
         layout = QFormLayout()
 
         self.respuesta_spinbox = []
@@ -74,15 +89,16 @@ class CocomoView(QWidget):
             sb.setMaximum(5)
             sb.valueChanged.connect(self.establecer_gti)
             layout.addRow(QLabel(label), sb)
-            self.respuesta_spinbox.append(sb) 
+            self.respuesta_spinbox.append(sb)
 
-        self.formGroupBox.setLayout(layout)
+        formGroupBox.setLayout(layout)
+        return formGroupBox
 
     def forma_fae(self):
-        self.formGroupBox2 = QGroupBox("Variable FAE")
+        self.formGroupBox2 = QGroupBox("Conductores de costo")
         layout = QFormLayout()
 
-        self.fae_combobox ={}
+        self.fae_combobox = {}
 
         for label in Cocomo.conductores_coste_fae:
             cb = QComboBox()
@@ -94,9 +110,15 @@ class CocomoView(QWidget):
             if index >= 0:
                 cb.setCurrentIndex(index)
             layout.addRow(QLabel(label), cb)
-            self.fae_combobox[label] =  cb
+            self.fae_combobox[label] = cb
 
         self.formGroupBox2.setLayout(layout)
+
+    def modelo_seleccionado(self):
+        pass
+
+    def tipo_seleccionado(self):
+        pass
 
     def forma_detalles_sistema(self):
         self.formGroupBox3 = QGroupBox("Datos sistema")
@@ -127,11 +149,30 @@ class CocomoView(QWidget):
 
         self.formGroupBox3.setLayout(layout)
 
+    def crear_seleccion_modelo(self):
+        modelo_groupbox = QGroupBox("Modelo")
+        modelo_layout = QVBoxLayout()
+        for label in Cocomo.Modelo:
+            item = QRadioButton(label.name)
+            modelo_layout.addWidget(item)
+        modelo_groupbox.setLayout(modelo_layout)
+        return modelo_groupbox
+
+    def crear_seleccion_tipo(self):
+        modelo_groupbox = QGroupBox("Tipo")
+        modelo_layout = QVBoxLayout()
+        for label in Cocomo.Tipo:
+            item = QRadioButton(label.name)
+            modelo_layout.addWidget(item)
+        modelo_groupbox.setLayout(modelo_layout)
+        return modelo_groupbox
+
     def reset(self):
         for sp in self.respuesta_spinbox:
             sp.setValue(0)
         for comboboxes_dict in self.fae_combobox:
-            index = self.fae_combobox[comboboxes_dict].findText('Nominal', Qt.MatchFixedString)
+            index = self.fae_combobox[comboboxes_dict].findText(
+                'Nominal', Qt.MatchFixedString)
             if index >= 0:
                 self.fae_combobox[comboboxes_dict].setCurrentIndex(index)
         self.entradas.setValue(0)
@@ -140,22 +181,24 @@ class CocomoView(QWidget):
         self.archivos.setValue(0)
         self.interfaces.setValue(0)
 
+        for index in range(self.lenguajes_programacion_proyecto_listwidget.count()):
+            self.lenguajes_programacion_proyecto_listwidget.item(
+                index).setCheckState(Qt.Unchecked)
+
     @pyqtSlot(int)
     def establecer_valor_fae(self, i):
         self.calculo_fae()
-        print('hola')
 
-    @pyqtSlot(int)   
+    @pyqtSlot(int)
     def establecer_gti(self, i):
         self.calculo_gti()
-        print('hol')
 
     def calculo_fae(self):
         valores = []
         for key in self.fae_combobox:
             combobox = self.fae_combobox[key]
-            value = Cocomo.conductores_coste_fae[key][str(combobox.currentText())]
-            print(value)
+            value = Cocomo.conductores_coste_fae[key][str(
+                combobox.currentText())]
             valores.append(value)
         self.controller.fae_cambiado(valores)
 
@@ -168,14 +211,15 @@ class CocomoView(QWidget):
     @pyqtSlot(int)
     def cambio_datos_sistema(self, i):
         self.calcular_pf()
-        print('ho')
 
     def calcular_pf(self):
-        self.controller.calcularPf(self.entradas.value(), self.salidas.value(), self.peticiones.value(), self.archivos.value(), self.interfaces.value())
+        self.controller.calcularPf(self.entradas.value(), self.salidas.value(
+        ), self.peticiones.value(), self.archivos.value(), self.interfaces.value())
 
     def salvar(self):
         options = QFileDialog.Options()
-        fileName, _ = QFileDialog.getSaveFileName(self,"Salvar modelo actual","","JSON Files (*.json);;All Files (*)", options=options)
+        fileName, _ = QFileDialog.getSaveFileName(
+            self, "Salvar modelo actual", "", "JSON Files (*.json);;All Files (*)", options=options)
         self.controller.abrir(fileName)
 
     def mostrar_calculos_cocomo(self, esfuerzo, tiempo_desarrollo, personal, pr, loc):
@@ -184,8 +228,24 @@ class CocomoView(QWidget):
         self.pr_label.setText(str(personal))
         self.kloc_label.setText(str(loc / 1000))
 
+    def definir_lenguaje_programacion(self, item):
+        lenguajes = []
+
+        for index in range(self.lenguajes_programacion_proyecto_listwidget.count()):
+            if self.lenguajes_programacion_proyecto_listwidget.item(index).checkState() == Qt.Checked:
+                lenguajes.append(
+                    self.lenguajes_programacion_proyecto_listwidget.item(index).text())
+
+        self.controller.definir_lenguaje_programacion(lenguajes)
+
+    def cambiar_tipo(self, tipo):
+        pass
+
+    def cambiar_modelo(self, modelo):
+        pass
+
     def abrir(self):
         options = QFileDialog.Options()
-        fileName, _ = QFileDialog.getSaveFileName(self,"Salvar modelo actual","","JSON Files (*.json);;All Files (*)", options=options)
+        fileName, _ = QFileDialog.getSaveFileName(
+            self, "Salvar modelo actual", "", "JSON Files (*.json);;All Files (*)", options=options)
         self.controller.abrir(fileName)
-        

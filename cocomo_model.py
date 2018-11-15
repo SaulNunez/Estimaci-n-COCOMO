@@ -17,6 +17,7 @@ class CocomoModel():
         self.__fae = 1
         self.gti = 0
         self.pf = 0
+        self.__lenguajes = []
 
     @property
     def tipo(self):
@@ -35,6 +36,21 @@ class CocomoModel():
     def establecer_modelo(self, modelo):
         self.__modelo = modelo
         self.calcularCocomo()
+
+    @property
+    def lenguajes(self):
+        return self.__lenguajes
+
+    @lenguajes.setter
+    def establecer_lenguajes(self, lenguajes):
+        self.__lenguajes.clear()
+        self.__lenguajes.append(lenguajes)
+        self.calcular_loc()
+
+    def calcular_loc(self):
+        self.loc = 0
+        for lenguaje in self.__lenguajes:
+            loc += self.pf * Cocomo.indice_loc[lenguaje]
     
     def calcularCocomo(self):
         a = Cocomo.constantes[self.__modelo][self.__tipo]['a']
@@ -102,6 +118,7 @@ class CocomoModel():
         self.pf = entradas_total + salidas_total + \
             peticiones_total + archivos_total + interfaces_total
 
+        self.calcular_loc()
         self.calcularCocomo()
 
     def calcularFae(self, valores):
