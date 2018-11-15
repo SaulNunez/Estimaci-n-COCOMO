@@ -8,6 +8,8 @@ class CocomoModel():
 
     def reset(self):
         self.__tipo = Cocomo.Tipo.ORGANICO
+        self.tipo = property(self.tipo, self.establecer_tipo)
+        self.modelo = property(self.modelo, self.establecer_modelo)
         self.__modelo = Cocomo.Modelo.BASICO
         self.__esfuerzo = 0
         self.__tiempo_de_desarrollo = 0
@@ -19,20 +21,16 @@ class CocomoModel():
         self.pf = 0
         self.__lenguajes = []
 
-    @property
     def tipo(self):
         return self.__tipo
 
-    @tipo.setter
     def establecer_tipo(self, tipo):
         self.__tipo = tipo
         self.calcularCocomo()
 
-    @property
     def modelo(self):
         return self.__modelo
 
-    @modelo.setter
     def establecer_modelo(self, modelo):
         self.__modelo = modelo
         self.calcularCocomo()

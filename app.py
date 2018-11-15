@@ -13,6 +13,8 @@ class CocomoController():
         self.view = CocomoView(self)
         self.modelo = CocomoModel(self, lambda esfuerzo, tiempo_desarrollo, personal, pr,
                                   loc: self.view.mostrar_calculos_cocomo(esfuerzo, tiempo_desarrollo, personal, pr, loc))
+        #self.establecer_modelo_vista(self.modelo.modelo)
+        #self.establecer_tipo_vista(self.modelo.tipo)
         #app.setStyle(QStyleFactory.create("Fusion"))
         print(type(self.modelo))
         sys.exit(app.exec_())
@@ -21,7 +23,7 @@ class CocomoController():
         self.view.reset()
 
     def definir_modelo(self, modelo):
-        self.modelo.modelo = modelo
+        self.modelo.modelo =  modelo
 
     def establecer_modelo_vista(self, modelo):
         self.view.cambiar_modelo(modelo)

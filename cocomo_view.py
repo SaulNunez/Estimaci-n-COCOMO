@@ -154,6 +154,9 @@ class CocomoView(QWidget):
         modelo_layout = QVBoxLayout()
         for label in Cocomo.Modelo:
             item = QRadioButton(label.name)
+            if label == Cocomo.Modelo.BASICO:
+                item.setChecked(True)
+            item.toggled.connect(self.establecer_modelo)
             modelo_layout.addWidget(item)
         modelo_groupbox.setLayout(modelo_layout)
         return modelo_groupbox
@@ -163,9 +166,24 @@ class CocomoView(QWidget):
         modelo_layout = QVBoxLayout()
         for label in Cocomo.Tipo:
             item = QRadioButton(label.name)
+            if label == Cocomo.Tipo.ORGANICO:
+                item.setChecked(True)
+            item.toggled.connect(self.establecer_tipo)    
             modelo_layout.addWidget(item)
         modelo_groupbox.setLayout(modelo_layout)
         return modelo_groupbox
+
+    @pyqtSlot(bool)
+    def establecer_modelo(self, bool):
+        for radio in self.modelo_groupbox.findChildren(QRadioButton):
+            if radio.isChecked:
+                self.controller.definir_modelo(Cocomo.Modelo[radio.text()])
+
+    @pyqtSlot(bool)
+    def establecer_tipo(self, bool):
+        for radio in self.tipo_groupbox.findChildren(QRadioButton):
+            if radio.isChecked:
+                self.controller.definir_tipo(Cocomo.Tipo[radio.text()])
 
     def reset(self):
         for sp in self.respuesta_spinbox:
