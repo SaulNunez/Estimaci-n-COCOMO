@@ -20,16 +20,17 @@ class CocomoController():
         sys.exit(app.exec_())
 
     def reestablecer_modelo(self):
-        self.view.reset()
+        self.modelo.reset()
 
     def definir_modelo(self, modelo):
-        self.modelo.modelo =  modelo
+        print('Establecer' + str(modelo))
+        self.modelo.establecer_modelo(modelo)
 
     def establecer_modelo_vista(self, modelo):
         self.view.cambiar_modelo(modelo)
 
     def definir_tipo(self, tipo):
-        self.modelo.tipo = tipo
+        self.modelo.establecer_tipo(tipo)
 
     def establecer_tipo_vista(self, tipo):
         self.view.cambiar_tipo(tipo)
@@ -64,7 +65,8 @@ class CocomoController():
         pass
 
     def definir_lenguaje_programacion(self, lenguajes):
-        self.modelo.__lenguajes = lenguajes
+        print(lenguajes)
+        self.modelo.establecer_lenguajes(lenguajes)
 
 if __name__ == '__main__':
     ccm = CocomoController()

@@ -57,8 +57,8 @@ class CocomoView(QWidget):
 
         self.secondary_top = QHBoxLayout()
         self.secondary_top.addWidget(self.formGroupBox3)
-        self.secondary_top.addWidget(self.modelo_groupbox)
         self.secondary_top.addWidget(self.tipo_groupbox)
+        self.secondary_top.addWidget(self.modelo_groupbox)
         self.secondary_top.addLayout(self.results_group)
 
         self.mainLayout.addLayout(self.secondary_top)
@@ -176,13 +176,15 @@ class CocomoView(QWidget):
     @pyqtSlot(bool)
     def establecer_modelo(self, bool):
         for radio in self.modelo_groupbox.findChildren(QRadioButton):
-            if radio.isChecked:
+            if radio.isChecked():
+                #print(Cocomo.Modelo[radio.text()])
                 self.controller.definir_modelo(Cocomo.Modelo[radio.text()])
 
     @pyqtSlot(bool)
     def establecer_tipo(self, bool):
         for radio in self.tipo_groupbox.findChildren(QRadioButton):
-            if radio.isChecked:
+            if radio.isChecked():
+                #print(Cocomo.Tipo[radio.text()])
                 self.controller.definir_tipo(Cocomo.Tipo[radio.text()])
 
     def reset(self):
@@ -202,6 +204,13 @@ class CocomoView(QWidget):
         for index in range(self.lenguajes_programacion_proyecto_listwidget.count()):
             self.lenguajes_programacion_proyecto_listwidget.item(
                 index).setCheckState(Qt.Unchecked)
+        
+        self.esfuerzo_label = QLabel("0")
+        self.tiempo_desarrollo_label = QLabel("0")
+        self.pr_label = QLabel("0")
+        self.kloc_label = QLabel("0")
+
+        self.controller.reestablecer_modelo()
 
     @pyqtSlot(int)
     def establecer_valor_fae(self, i):
@@ -253,7 +262,7 @@ class CocomoView(QWidget):
             if self.lenguajes_programacion_proyecto_listwidget.item(index).checkState() == Qt.Checked:
                 lenguajes.append(
                     self.lenguajes_programacion_proyecto_listwidget.item(index).text())
-
+        print(lenguajes)
         self.controller.definir_lenguaje_programacion(lenguajes)
 
     def cambiar_tipo(self, tipo):

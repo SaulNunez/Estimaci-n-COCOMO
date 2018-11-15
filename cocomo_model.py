@@ -10,6 +10,7 @@ class CocomoModel():
         self.__tipo = Cocomo.Tipo.ORGANICO
         self.tipo = property(self.tipo, self.establecer_tipo)
         self.modelo = property(self.modelo, self.establecer_modelo)
+        self.lenguajes = property(self.lenguajes, self.establecer_lenguajes)
         self.__modelo = Cocomo.Modelo.BASICO
         self.__esfuerzo = 0
         self.__tiempo_de_desarrollo = 0
@@ -33,22 +34,23 @@ class CocomoModel():
 
     def establecer_modelo(self, modelo):
         self.__modelo = modelo
+        print('Establecido' + str(self.__modelo))
         self.calcularCocomo()
 
-    @property
     def lenguajes(self):
         return self.__lenguajes
 
-    @lenguajes.setter
     def establecer_lenguajes(self, lenguajes):
-        self.__lenguajes.clear()
-        self.__lenguajes.append(lenguajes)
+        print("hol")
+        print(lenguajes)
+        self.__lenguajes = lenguajes
         self.calcular_loc()
 
     def calcular_loc(self):
         self.loc = 0
         for lenguaje in self.__lenguajes:
-            loc += self.pf * Cocomo.indice_loc[lenguaje]
+            self.loc += self.pf * Cocomo.indice_loc[lenguaje]
+        print("Lineas" + str(self.loc))
     
     def calcularCocomo(self):
         a = Cocomo.constantes[self.__modelo][self.__tipo]['a']
@@ -68,13 +70,15 @@ class CocomoModel():
         else:
             self.__pr = 0
 
+        self.calcular_loc()
         self.correr_al_calcular(self.__esfuerzo, self.__tiempo_de_desarrollo, self.__personal, self.__pr, self.loc)
 
     def calcularGti(self, valores):
         self.gti = 0
         for val in valores:
             self.gti = self.gti + val
-        self.calcularCocomo() 
+        print("Grado total de influencia" + str(self.gti))
+        self.calcularCocomo()
 
     def calcularPf(self, entradas, salidas, peticiones, archivos, interfaces):
         self.pf = 0
@@ -116,11 +120,14 @@ class CocomoModel():
         self.pf = entradas_total + salidas_total + \
             peticiones_total + archivos_total + interfaces_total
 
-        self.calcular_loc()
+        print("PF" + str(self.pf))
+
         self.calcularCocomo()
 
     def calcularFae(self, valores):
         self.__fae = 1
         for val in valores:
             self.__fae = self.__fae * val
+        print("FAE" + str(self.__fae))
+        self.calcularCocomo()
 
