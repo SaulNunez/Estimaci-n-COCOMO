@@ -12,7 +12,7 @@ class CocomoController():
         app = QApplication(sys.argv)
         self.view = CocomoView(self)
         self.modelo = CocomoModel(self, lambda esfuerzo, tiempo_desarrollo, personal, pr,
-                                  loc: self.view.mostrar_calculos_cocomo(esfuerzo, tiempo_desarrollo, personal, pr, loc))
+                                  loc, pf, di: self.view.mostrar_calculos_cocomo(esfuerzo, tiempo_desarrollo, personal, pr, loc, pf, di))
         #self.establecer_modelo_vista(self.modelo.modelo)
         #self.establecer_tipo_vista(self.modelo.tipo)
         #app.setStyle(QStyleFactory.create("Fusion"))
@@ -48,9 +48,9 @@ class CocomoController():
             pass
         # pass
 
-    def cocomo_calculado(self, esfuerzo, tiempo_desarrollo, personal, pr, loc):
+    def cocomo_calculado(self, esfuerzo, tiempo_desarrollo, personal, pr, loc, pf, di):
         self.view.mostrar_calculos_cocomo(
-            esfuerzo, tiempo_desarrollo, personal, pr, loc)
+            esfuerzo, tiempo_desarrollo, personal, pr, loc, pf, di)
 
     def calcularPf(self, entradas, salidas, peticiones, archivos, interfaces):
         self.modelo.calcularPf(

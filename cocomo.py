@@ -99,7 +99,9 @@ class Cocomo():
         'Visual Cobol': 20,
         'Clipper': 19,
         'Power Builder': 16,
-        'Hoja de Calculo': 6
+        'Hoja de Calculo': 6,
+        'SQL' : 12,
+        'Prolog/LISP': 64
     }
 
     preguntas_grado_total_influencia = [

@@ -48,12 +48,22 @@ class CocomoView(QWidget):
         self.results_group.addWidget(QLabel("Tiempo de desarrollo (meses)"))
         self.tiempo_desarrollo_label = QLabel("0")
         self.results_group.addWidget(self.tiempo_desarrollo_label)
+        self.personal_label=QLabel("0")
+        self.results_group.addWidget(QLabel("Personal"))
+        self.results_group.addWidget(self.personal_label)
         self.results_group.addWidget(QLabel("PR(LDC/persona x mes)"))
         self.pr_label = QLabel("0")
         self.results_group.addWidget(self.pr_label)
         self.results_group.addWidget(QLabel("KLDC"))
         self.kloc_label = QLabel("0")
         self.results_group.addWidget(self.kloc_label)
+        self.pf_label = QLabel("0")
+        self.results_group.addWidget(QLabel("PF"))
+        self.results_group.addWidget(self.pf_label)
+        self.di_label = QLabel("0")
+        self.results_group.addWidget(QLabel("Di"))
+        self.results_group.addWidget(self.di_label)
+        
 
         self.secondary_top = QHBoxLayout()
         self.secondary_top.addWidget(self.formGroupBox3)
@@ -249,11 +259,14 @@ class CocomoView(QWidget):
             self, "Salvar modelo actual", "", "JSON Files (*.json);;All Files (*)", options=options)
         self.controller.abrir(fileName)
 
-    def mostrar_calculos_cocomo(self, esfuerzo, tiempo_desarrollo, personal, pr, loc):
+    def mostrar_calculos_cocomo(self, esfuerzo, tiempo_desarrollo, personal, pr, loc, pf, di):
         self.esfuerzo_label.setText(str(esfuerzo))
         self.tiempo_desarrollo_label.setText(str(tiempo_desarrollo))
         self.pr_label.setText(str(personal))
         self.kloc_label.setText(str(loc / 1000))
+        self.personal_label.setText(str(personal))
+        self.pf_label.setText(str(pf))
+        self.di_label.setText(str(di))
 
     def definir_lenguaje_programacion(self, item):
         lenguajes = []

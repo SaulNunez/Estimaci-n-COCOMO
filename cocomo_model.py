@@ -18,7 +18,7 @@ class CocomoModel():
         self.__pr = 0
         self.loc = 0
         self.__fae = 1
-        self.gti = 0
+        self.di = 0
         self.pf = 0
         self.__lenguajes = []
 
@@ -57,12 +57,13 @@ class CocomoModel():
         b = Cocomo.constantes[self.__modelo][self.__tipo]['b']
         c = Cocomo.constantes[self.__modelo][self.__tipo]['c']
         d = Cocomo.constantes[self.__modelo][self.__tipo]['d']
-        self.__esfuerzo = a * (self.loc / 1000) ** b
+        self.__esfuerzo = a * (self.loc / 1000.0) ** b
         if(self.__modelo == Cocomo.Modelo.INTERMEDIO):
             self.__esfuerzo = self.__esfuerzo * self.__fae
+        
         self.__tiempo_de_desarrollo = c * self.__esfuerzo ** d
         if self.__tiempo_de_desarrollo != 0:
-            self.__personal = self.__esfuerzo/self.__tiempo_de_desarrollo
+            self.__personal = self.__esfuerzo//self.__tiempo_de_desarrollo
         else:
             self.__personal = 0
         if self.__esfuerzo != 0:
@@ -70,14 +71,16 @@ class CocomoModel():
         else:
             self.__pr = 0
 
+        print("vars" + str(a) + ","+str(b)+ ","+str(c)+","+str(d))
+
         self.calcular_loc()
-        self.correr_al_calcular(self.__esfuerzo, self.__tiempo_de_desarrollo, self.__personal, self.__pr, self.loc)
+        self.correr_al_calcular(self.__esfuerzo, self.__tiempo_de_desarrollo, self.__personal, self.__pr, self.loc, self.pf, self.di)
 
     def calcularGti(self, valores):
-        self.gti = 0
+        self.di = 0
         for val in valores:
-            self.gti = self.gti + val
-        print("Grado total de influencia" + str(self.gti))
+            self.di = self.di + val
+        print("Grado total de influencia" + str(self.di))
         self.calcularCocomo()
 
     def calcularPf(self, entradas, salidas, peticiones, archivos, interfaces):
@@ -117,9 +120,11 @@ class CocomoModel():
         else:
             interfaces_total = interfaces * 10
 
-        self.pf = entradas_total + salidas_total + \
+        suma = entradas_total + salidas_total + \
             peticiones_total + archivos_total + interfaces_total
+        print(suma)
 
+        self.pf = suma * (0.65 + 0.01 * self.di)
         print("PF" + str(self.pf))
 
         self.calcularCocomo()
@@ -127,7 +132,7 @@ class CocomoModel():
     def calcularFae(self, valores):
         self.__fae = 1
         for val in valores:
-            self.__fae = self.__fae * val
+            self.__fae *= val
         print("FAE" + str(self.__fae))
         self.calcularCocomo()
 
