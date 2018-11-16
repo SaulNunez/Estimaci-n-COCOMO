@@ -6,6 +6,7 @@ from cocomo_model import CocomoModel
 from cocomo_view import CocomoView
 import json
 
+# Hecho por Saúl Núñez Castruita
 
 class CocomoController():
     def __init__(self):
